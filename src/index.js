@@ -38,6 +38,9 @@ export default function (token) {
         if (response.body.errors) {
           return callback(response.body.errors)
         }
+        if (!response.body.data.pipeline) {
+          return callback()
+        }
         let builds = {}
         response.body.data.pipeline.builds.edges.forEach(function (build) {
           builds[build.node.number] = build.node.jobs.edges.map((e) => e.node)
