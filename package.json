@@ -1,6 +1,6 @@
 {
   "name": "last-from-buildkite",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Fetch the last job for a specific build in buildkite",
   "main": "lib/index.js",
   "bin": {
