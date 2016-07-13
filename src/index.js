@@ -1,7 +1,7 @@
 import request from 'superagent'
 
 export default function (token) {
-  return function (projectSlug, command, callback) {
+  return function (projectSlug, command, callback, count = 1) {
     let query = `query Query {
       pipeline(slug: "${projectSlug}") {
         builds {
@@ -45,21 +45,29 @@ export default function (token) {
         response.body.data.pipeline.builds.edges.forEach(function (build) {
           builds[build.node.number] = build.node.jobs.edges.map((e) => e.node)
         })
-        return callback(null, getLastBuildWithCommand(builds, command))
+        return callback(null, getLastBuildWithCommand(builds, command, count))
       })
   }
 }
 
-function getLastBuildWithCommand (builds, command) {
+function getLastBuildWithCommand (builds, command, count) {
   let buildNums = Object.keys(builds).sort((a, b) => b - a)
+  let foundNumbers = []
   for (let i = 0; i < buildNums.length; i++) {
     let buildNum = buildNums[i]
     let b = checkBuild(builds[buildNum], command)
     if (b) {
-      return buildNum
+      if (count === 1) {
+        return buildNum
+      } else {
+        foundNumbers.push(buildNum)
+        if (foundNumbers.length === count) {
+          return foundNumbers
+        }
+      }
     }
   }
-  return null
+  return foundNumbers.length > 1 ? foundNumbers : null
 }
 
 function checkBuild (build, command) {

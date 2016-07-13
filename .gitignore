@@ -29,3 +29,4 @@ node_modules
 # Ignore ES5 files
 lib
 .nyc_output
+.DS_Store

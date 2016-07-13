@@ -13,6 +13,10 @@ var argv = require('yargs')
               alias: 'c',
               describe: 'Command to search for'
             })
+            .option('count', {
+              default: 1,
+              describe: 'Number of results you wish to fetch'
+            })
             .required([ 't', 's', 'c' ])
             .argv
 
@@ -26,5 +30,9 @@ require('../lib')(argv.t)(argv.s, argv.c, function (err, buildNum) {
     console.log("Couldn't find a build that has run that command :(")
     return
   }
-  console.log('Build ' + buildNum + ' was the last build to run "' + argv.c + '"')
-})
+  if (argv.count === 1) {
+    console.log('Build ' + buildNum + ' was the last build to run "' + argv.c + '"')
+  } else {
+    console.log('Builds', buildNum.join(', '), 'have run "' + argv.c + '"')
+  }
+}, argv.count)
