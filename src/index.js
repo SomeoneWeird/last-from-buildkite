@@ -11,8 +11,8 @@ export default function (token) {
               jobs {
                 edges {
                   node {
+                    __typename
                     ... on JobTypeCommand {
-                      type
                       label
                       state
                     }
@@ -73,7 +73,7 @@ function getLastBuildWithCommand (builds, command, count) {
 function checkBuild (build, command) {
   for (let i = 0; i < build.length; i++) {
     let job = build[i]
-    if (job.type !== 'script') continue
+    if (job.__typename !== 'JobTypeCommand') continue
     if (job.label !== command) continue
     if (job.state === 'finished') {
       return true
